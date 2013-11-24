@@ -1,24 +1,21 @@
 
-var cache = {};
-var memoize = function(key, fn){ return function(){
-	var result = fn.apply(null, arguments);
-	cache[key] = result;
-	return result;
-}};
-
 var pick = function(key){ return function(obj){ return obj[key]; }; };
-
-var tpl = document.getElementById('row').innerHTML;
-var row = function(tab){
-	var replace = function(context, key){ return context.replace('{{'+key+'}}',tab[key]); }
-	return ['title','url','favIconUrl'].reduce(replace, tpl);
-};
+var indexOf = function(match){ return function(obj){ return obj.indexOf(match) }};
 
 var tokenizerStr = '([^a-zA-Z0-9]+)';
 var tokenizer = new RegExp(tokenizerStr);
 
 var search = document.getElementById('search');
 var container = document.getElementById('tablist');
+
+var tpl = document.getElementById('row').innerHTML;
+
+
+
+var row = function(tab){
+	var replace = function(context, key){ return context.replace('{{'+key+'}}',tab[key]); }
+	return ['title','url','favIconUrl'].reduce(replace, tpl);
+};
 
 var getInput = function(){ return search.value.toLowerCase() };
 
@@ -42,7 +39,7 @@ var activate = function(tab){
 	});
 };
 
-var indexOf = function(match){ return function(obj){ return obj.indexOf(match) }};
+
 
 var score = function(terms){ return function(tab){
 	var titleTerms = tab.title.toLowerCase().split(tokenizer);
@@ -56,21 +53,23 @@ var score = function(terms){ return function(tab){
 	}
 }}
 
-var getScoredTabs = function(tabInfos){
+var getSortedResults = function(tabInfos){
 	var inputTokens = getInput().split(tokenizer).filter(function(term){
 		return !term.match(tokenizer);
 	});
-	console.log(inputTokens);
-	
-	return tabInfos
+
+	return getInput() == ""
+	? tabInfos
+	: tabInfos
 		.map( score(inputTokens) )
 		.filter( function(st){ return st.score != -1 } )
-		.sort( function(a,b){ return a.score - b.score } );
+		.sort( function(a,b){ return a.score - b.score } )
+		.map( pick('tab') );
 };
 
 chrome.tabs.query({}, function(tabInfos){
 	var filterAndDraw = function(){
-		results = getScoredTabs(tabInfos).map( pick('tab') );
+		results = getSortedResults(tabInfos);
 		renderTabs(results);
 		selectResult(0);
 	};
