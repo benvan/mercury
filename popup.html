@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Mercury</title>
+    <style>
+      body {
+        font-family: Arial;
+        line-height: 1;
+        min-width: 300px;
+        width:600px;
+      }
+      html, body, div, span, ul, li {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        vertical-align: baseline;
+      }
+      ol, ul {
+        list-style: none;
+      }
+
+      #container{
+        max-height:300px;
+        
+      }
+
+      ul{
+        padding:5px;
+        overflow-x:hidden;
+        max-height: 300px;
+      }
+
+      li {
+        margin-bottom: 5px;
+        padding-left:21px;
+        background-repeat: no-repeat;
+        background-position: 0 0;
+        background-size: 14px;
+        cursor:pointer;
+      }
+
+      li div{
+        font-size: 10pt;
+        padding: 0px 0px;
+      }
+      li span{
+        color: #CCCCCC;
+        font-size: 9pt;
+        white-space: nowrap;
+      }
+
+      ul:not(:hover) li.active{
+        background-color:#EBEBEB;
+        cursor:pointer;
+      }
+
+      li:hover{
+        background-color:#E8F6FF;
+      }
+
+      input{
+        width: calc(100% - 20px);
+        margin-left: 3px;
+        font-size: 10pt;
+        padding: 5px;
+        padding-bottom: 10px;
+        outline: none;
+      }
+
+      .heightHack{
+        height:300px;
+      }
+
+    </style>
+
+    <script id="row" type="template">
+      
+        <li style="background-image:url({{favIconUrl}});">
+          <div>{{title}}</div>
+          <span>{{url}}</span>
+        </li>
+
+    </script>
+  </head>
+  <body>
+    <input id="search" autofocus="true" placeholder="type to search" type="text" />
+    <div id="container">
+      <ul id="tablist" class="heightHack"></ul>
+    </div>
+    <div id="bg-preloads"></div>
+
+    <script type="text/javascript" src="mercury.js"></script>
+    
+  </body>
+</html>
+
+
+
