@@ -5,6 +5,7 @@
   "description": "Type-to-search your open tabs",
   "version": "1.0",
   "offline_enabled": true,
+  "author": "Ben van Enckevort",
 
   "permissions": [ "tabs" ],
   "browser_action": {
