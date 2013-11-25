@@ -9,6 +9,10 @@
 
   "permissions": [ "tabs" ],
   "browser_action": {
+    "default_icon": {
+         "38": "images/icon-38.png",
+         "19": "images/icon-19.png"
+      },
     "default_popup": "popup.html"
   },
 
@@ -16,6 +20,12 @@
     "scripts": ["background.js"],
     "persistent": true
   },
+
+  "icons": {
+      "128": "icons/icon-128.png",
+      "48": "icons/icon-48.png",
+      "16": "icons/icon-16.png"
+   },
   
   "commands": {
     "_execute_browser_action": {
