@@ -1,0 +1,3 @@
+#!/bin/bash
+
+zip mercury.zip background.js manifest.json mercury.js popup.html icons/icon-*.png
