@@ -90,13 +90,6 @@ chrome.tabs.query({}, function(tabInfos){
 			return false;
 		} else if(ev.keyCode == 13){
 			activate(results[index]);
-		} else if(ev.keyCode == 27){
-			if (search.value){
-				search.value = '';
-				filterAndDraw();
-				ev.preventDefault();
-				return false;
-			}
 		}
 	});
 
