@@ -43,8 +43,11 @@ var activate = function(tab){
 
 var score = function(terms){ return function(tab){
 	var titleTerms = tab.title.toLowerCase().split(tokenizer);
+	var urlTerms = tab.url.toLowerCase().split(tokenizer);
+	var allTerms = [].concat(titleTerms,urlTerms);
+
 	var matches = terms.map(function(term){
-		return titleTerms.map( indexOf(term) ).indexOf(0);
+		return allTerms.map( indexOf(term) ).indexOf(0);
 	});
 	var hasMisMatch = matches.indexOf(-1) >= 0 || !matches.length;
 	return {
