@@ -30,8 +30,8 @@
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {
-        "default": "Ctrl+Shift+P",
-        "linux": "Ctrl+Shift+P",
+        "default": "Ctrl+Shift+L",
+        "linux": "Ctrl+Shift+L",
         "mac": "Ctrl+Shift+I"
       }
     }
