@@ -26,17 +26,23 @@
       }
 
       ul{
-        padding:5px;
+        padding:5px 5px 5px 1px;
         overflow-x:hidden;
         max-height: 300px;
       }
 
       li {
+        border-left:1px solid transparent;
         margin-bottom: 5px;
-        padding-left:21px;
+        padding-left:25px;
         background-repeat: no-repeat;
-        background-position: 0 0;
+        background-position: 4px 0;
         background-size: 14px;
+      }
+
+      li:hover {
+        border-left:1px solid #BBB;
+        cursor:pointer;
       }
 
       li div{

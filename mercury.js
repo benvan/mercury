@@ -39,6 +39,12 @@ var activate = function(tab){
 	});
 };
 
+var clickedIndex = function(ev){
+  var el = ev.target;
+  while (el.tagName.toLowerCase() != "li" && el) el = el.parentElement;
+  return Array.prototype.indexOf.call(el.parentNode.children,el);
+};
+
 
 
 var score = function(terms){ return function(tab){
@@ -80,6 +86,11 @@ chrome.tabs.query({}, function(tabInfos){
 	var index = 0;
 	var results = [];
 
+
+  container.addEventListener('click', function(e){
+    index = clickedIndex(e);
+    activate(results[index]);
+  });
 	search.addEventListener('input', filterAndDraw );
 	search.addEventListener('keydown', function(ev){
 		if ([38,40].indexOf(ev.keyCode) >= 0 && results.length){
