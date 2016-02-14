@@ -22,7 +22,7 @@
 
       #container{
         max-height:300px;
-        
+        position:relative;
       }
 
       ul{
@@ -73,28 +73,85 @@
         height:300px;
       }
 
+      #tab-death{
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+      }
+
+      #tab-death li{
+        position:absolute;
+      }
+
+      li.shrink{
+        animation-fill-mode:both;
+        animation-name: shrink;
+        animation-duration: .15s;
+      }
+
+
+      @keyframes boom {
+          0% {
+              opacity: 1;
+          }
+
+          50% {
+              opacity: 0;
+              -webkit-transform: scale3d(1.2, 1.2, 1.2);
+              transform: scale3d(1.2, 1.2, 1.2);
+          }
+
+          100% {
+              opacity: 0;
+          }
+      }
+
+      @keyframes shrink {
+          0% {
+              height:0px;
+              margin:0;
+          }
+
+          100% {
+              padding-top:0px;
+              padding-bottom:0px;
+          }
+      }
+
+      .boom {
+          -webkit-animation-fill-mode:both;
+          animation-fill-mode:both;
+          -webkit-animation-name: boom;
+          animation-name: boom;
+          -webkit-animation-duration: .5s;
+          animation-duration: .5s;
+      }
+
+
+
     </style>
 
     <script id="row" type="template">
-      
         <li style="background-image:url({{favIconUrl}});">
           <div>{{title}}</div>
           <span>{{url}}</span>
         </li>
-
+    </script>
+    <script id="dummy" type="template">
+        <li style="padding-top:{{half}}px; padding-bottom:{{half}}px"></li>
     </script>
   </head>
   <body>
     <input id="search" autofocus="true" placeholder="type to search" type="text" />
     <div id="container">
       <ul id="tablist" class="heightHack"></ul>
+      <ul id="tab-death"></ul>
     </div>
     <div id="bg-preloads"></div>
 
     <script type="text/javascript" src="mercury.js"></script>
-    
+
   </body>
 </html>
-
-
-

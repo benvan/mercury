@@ -8,15 +8,31 @@ var tokenizer = new RegExp(tokenizerStr);
 
 var search = document.getElementById('search');
 var container = document.getElementById('tablist');
+var deathGround = document.getElementById('tab-death');
 
-var tpl = document.getElementById('row').innerHTML;
+var tplcache = {};
 
 
+var tpl = function(name,values){
+  return Object.keys(values||{}).reduce(
+    function(context, key){ return context.replace(new RegExp('{{'+key+'}}','g'),values[key]); },
+    tplcache[name] || (tplcache[name] = document.getElementById(name).innerHTML)
+  );
+};
 
 var row = function(tab){
-    var replace = function(context, key){ return context.replace('{{'+key+'}}',tab[key]); }
-    return ['title','url','favIconUrl'].reduce(replace, tpl);
+  return tpl('row',{
+    favIconUrl:tab.favIconUrl || '',
+    title:tab.title,
+    url:tab.url
+  })
 };
+
+var create = function(html){
+  var dummy = document.createElement('div');
+  dummy.innerHTML = html;
+  return dummy.children[0]
+}
 
 var getInput = function(){ return search.value.toLowerCase() };
 
@@ -24,11 +40,16 @@ var renderTabs = function(tabs){
     container.innerHTML = tabs.map( row ).join('');
 };
 
-var selectResult = function(index){
+var getEl = function(index){
+    return container.children[index];
+}
+
+var selectResult = function(i){
+    index = i;
     [].slice.apply(container.children).forEach(function(child){
-        child.removeAttribute('class');
+        child.className = child.className.replace( /(?:^|\s)active(?!\S)/ , '' )
     });
-    container.children[index].setAttribute('class', 'active');
+    container.children[index].className += ' active';
     container.children[index].scrollIntoView(false);
 };
 
@@ -38,6 +59,31 @@ var activate = function(tab){
             chrome.windows.update(tab.windowId, {focused:true});
         }
     });
+};
+
+var closeTab = function(tab,index,context){
+    var el = getEl(index);
+
+    var dummyEl = create(tpl('dummy',{half:(el.offsetHeight/2)}));
+    var top = el.offsetTop;
+
+    var dyingTabEl = el.parentElement.replaceChild(dummyEl,el)
+    deathGround.appendChild(dyingTabEl);
+    dyingTabEl.style.top = top+'px';
+
+    dummyEl.addEventListener('animationend', function(){
+      dummyEl.parentElement.removeChild(dummyEl);
+      chrome.tabs.remove(tab.id);
+      results.splice(index,1);
+      selectResult( (index >= results.length) ? results.length-1 : index );
+    });
+
+    el.addEventListener('animationend', function(){
+      deathGround.removeChild(el);
+    });
+
+    dummyEl.className = 'shrink'
+    el.className = 'boom';
 };
 
 var clickedIndex = function(ev){
@@ -77,6 +123,9 @@ var getSortedResults = function(tabInfos){
         .map( pick('tab') );
 };
 
+var results = [];
+var index = 0;
+
 chrome.tabs.query({}, function(tabInfos){
     var filterAndDraw = function(){
         results = getSortedResults(tabInfos);
@@ -84,30 +133,29 @@ chrome.tabs.query({}, function(tabInfos){
         selectResult(0);
     };
 
-    var index = 0;
-    var results = [];
-
-
     container.addEventListener('click', function(e){
         index = clickedIndex(e);
         activate(results[index]);
     });
     search.addEventListener('input', filterAndDraw );
     search.addEventListener('keydown', function(ev){
-        var dir = function(x){ return function(){
+        var forTab = function(fn){ return function(){ fn(results[index], index, results); }; };
+        var capture = function(fn){ return function(){ fn(); ev.preventDefault(); return false } };
+        var ctrl = function(fn){ return ev.ctrlKey ? fn : noop };
+        var meta = function(fn){ return ev.metaKey ? fn : noop };
+
+        var dir = function(x){ return capture(function(){
             index += x + results.length; index %= results.length;
             selectResult(index);
-            ev.preventDefault();
-            return false;
-        }};
-        var ctrl = function(fn){ return ev.ctrlKey ? fn : noop };
+        })};
 
         var cmds = {
             38: dir(-1),
             40: dir(1),
             78: ctrl(dir(1)),
             80: ctrl(dir(-1)),
-            13: function(){ activate(results[index]); }
+            13: forTab(activate),
+            8:  meta(capture(forTab(closeTab)))
         };
 
         return (cmds[ev.keyCode] || noop)();
@@ -121,5 +169,3 @@ chrome.tabs.query({}, function(tabInfos){
 document.addEventListener('keydown', function(){
     search.focus();
 });
-
-
