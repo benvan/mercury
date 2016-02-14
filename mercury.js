@@ -141,6 +141,9 @@ chrome.tabs.query({}, function(tabInfos){
     search.addEventListener('keydown', function(ev){
         var forTab = function(fn){ return function(){ fn(results[index], index, results); }; };
         var capture = function(fn){ return function(){ fn(); ev.preventDefault(); return false } };
+        var xor = function(a,b){ return function(fn){
+          return (a(fn) == b(fn)) ? noop : fn;
+        }};
         var ctrl = function(fn){ return ev.ctrlKey ? fn : noop };
         var meta = function(fn){ return ev.metaKey ? fn : noop };
 
@@ -155,7 +158,7 @@ chrome.tabs.query({}, function(tabInfos){
             78: ctrl(dir(1)),
             80: ctrl(dir(-1)),
             13: forTab(activate),
-            8:  meta(capture(forTab(closeTab)))
+            8:  xor(meta,ctrl)(capture(forTab(closeTab)))
         };
 
         return (cmds[ev.keyCode] || noop)();
