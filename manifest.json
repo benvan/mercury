@@ -26,13 +26,13 @@
       "48": "icons/icon-48.png",
       "16": "icons/icon-16.png"
    },
-  
+
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {
         "default": "Ctrl+Shift+L",
         "linux": "Ctrl+Shift+L",
-        "mac": "Ctrl+Shift+I"
+        "mac": "Command+Shift+I"
       }
     }
   }
