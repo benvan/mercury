@@ -3,7 +3,7 @@
 
   "name": "mercury",
   "description": "Type-to-search your open tabs",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "offline_enabled": true,
   "author": "Ben van Enckevort",
 
