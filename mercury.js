@@ -44,13 +44,30 @@ var getEl = function(index){
     return container.children[index];
 }
 
+var isElementInViewport = function(el) {
+
+    var rect = el.getBoundingClientRect();
+
+    return (
+        rect.top >= search.offsetHeight &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+    );
+}
+
 var selectResult = function(i){
+    var oldIndex = index;
     index = i;
     [].slice.apply(container.children).forEach(function(child){
         child.className = child.className.replace( /(?:^|\s)active(?!\S)/ , '' )
     });
     container.children[index].className += ' active';
-    container.children[index].scrollIntoView(false);
+
+    if (!isElementInViewport(container.children[index])){
+        container.children[index].scrollIntoView((oldIndex > i || i == 0))
+    }
+    
 };
 
 var activate = function(tab){
@@ -148,8 +165,9 @@ chrome.tabs.query({}, function(tabInfos){
         var meta = function(fn){ return ev.metaKey ? fn : noop };
 
         var dir = function(x){ return capture(function(){
-            index += x + results.length; index %= results.length;
-            selectResult(index);
+            var i = index + x + results.length; 
+            i %= results.length;
+            selectResult(i);
         })};
 
         var cmds = {
